@@ -1,10 +1,3 @@
---[[
-    SwirlHub - Enhanced Rivals Script
-    Created by: Flames
-    Enhanced Version with improved performance and features
-]]--
-
---// Services
 local Players = game:FindService("Players") or game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -12,7 +5,6 @@ local Lighting = game:GetService("Lighting")
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 
---// Load Fluent and Addons with error handling
 local function safeLoadstring(url, fallbackMsg)
     local success, result = pcall(function()
         return loadstring(game:HttpGet(url))()
@@ -32,12 +24,10 @@ if not Fluent then
     error("❌ Failed to load Fluent library! Please check your internet connection.")
 end
 
---// Global Variables
 local LocalPlayer = Players.LocalPlayer
 local Options = Fluent.Options
 local Connections = {}
 
---// Enhanced Debug System
 local DEBUG_ENABLED = true
 local function DebugLog(msg, level)
     if not DEBUG_ENABLED then return end
@@ -55,7 +45,6 @@ local function DebugLog(msg, level)
     print(prefix .. ": " .. msg)
 end
 
---// Create Enhanced Window
 local Window = Fluent:CreateWindow({
     Title = "🌌 SwirlHub - Rivals Enhanced " .. (Fluent.Version or "v2.0"),
     SubTitle = "by Flames - Enhanced Edition",
@@ -66,12 +55,10 @@ local Window = Fluent:CreateWindow({
     MinimizeKey = Enum.KeyCode.LeftControl
 })
 
---// Tabs
 local MainTab = Window:AddTab({ Title = "Main", Icon = "home" })
 local SettingsTab = Window:AddTab({ Title = "Settings", Icon = "settings" })
 local MiscTab = Window:AddTab({ Title = "Misc", Icon = "star" })
 
---// Enhanced Notification System
 local function ShowNotification(title, content, duration, type)
     type = type or "info"
     Fluent:Notify({
@@ -82,17 +69,13 @@ local function ShowNotification(title, content, duration, type)
     })
 end
 
---// Welcome Message
 ShowNotification("🎉 Welcome", "SwirlHub Enhanced has been loaded successfully!", 6, "success")
 DebugLog("Enhanced script initialization complete.", "SUCCESS")
-
---// INFORMATION SECTION
 MainTab:AddParagraph({
     Title = "ℹ️ INFORMATION - Enhanced Version",
     Content = "🔹 Enhanced performance and stability\n🔹 New features and improved UI\n🔹 Questions? Join Discord: discord.gg/5c9D3VD7se\n🔹 ⚠️ Some features may require specific game conditions"
 })
 
---// ENHANCED AIMSCRIPT SYSTEM
 local AimScript = {
     enabled = false,
     key = Enum.KeyCode.E,
@@ -110,7 +93,6 @@ local AimScript = {
     predictionStrength = 0.1
 }
 
---// Enhanced FOV Circle
 local FOVCircle = Drawing.new("Circle")
 FOVCircle.Thickness = 2
 FOVCircle.Filled = false
@@ -124,7 +106,7 @@ local function UpdateFOV()
     FOVCircle.Visible = AimScript.enabled
 end
 
---// Enhanced Target Selection with Prediction
+
 local function GetClosestTargetInFOV()
     if not Players then return nil end
     local closest, minDist = nil, math.huge
@@ -138,15 +120,13 @@ local function GetClosestTargetInFOV()
            and player.Character:FindFirstChild("Humanoid")
            and player.Character.Humanoid.Health > 0 then
 
-            -- Team check
             if AimScript.teamCheck and player.Team == LocalPlayer.Team then
                 continue
             end
 
             local targetPart = player.Character[AimScript.aimPart]
             local targetPos = targetPart.Position
-            
-            -- Prediction
+
             if AimScript.prediction and player.Character:FindFirstChild("HumanoidRootPart") then
                 local velocity = player.Character.HumanoidRootPart.Velocity
                 targetPos = targetPos + (velocity * AimScript.predictionStrength)
@@ -156,13 +136,11 @@ local function GetClosestTargetInFOV()
             local distance = (Vector2.new(screenPoint.X, screenPoint.Y) - mousePos).Magnitude
             local worldDistance = (targetPos - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
 
-            -- Distance and FOV check
             if onScreen 
                and distance < AimScript.fovSize 
                and distance < minDist 
                and worldDistance <= AimScript.maxDistance then
-                
-                -- Visibility check
+
                 if AimScript.visibilityCheck then
                     local raycast = workspace:Raycast(camera.CFrame.Position, (targetPos - camera.CFrame.Position).Unit * worldDistance)
                     if raycast and raycast.Instance and not raycast.Instance:IsDescendantOf(player.Character) then
@@ -178,7 +156,6 @@ local function GetClosestTargetInFOV()
     return closest
 end
 
---// Smooth Mouse Movement
 local function MoveMouseToTarget(target)
     if not target or not target.Character or not target.Character:FindFirstChild(AimScript.aimPart) then
         return
@@ -187,7 +164,6 @@ local function MoveMouseToTarget(target)
     local targetPart = target.Character[AimScript.aimPart]
     local targetPos = targetPart.Position
     
-    -- Apply prediction
     if AimScript.prediction and target.Character:FindFirstChild("HumanoidRootPart") then
         local velocity = target.Character.HumanoidRootPart.Velocity
         targetPos = targetPos + (velocity * AimScript.predictionStrength)
@@ -198,8 +174,7 @@ local function MoveMouseToTarget(target)
         local mousePos = UserInputService:GetMouseLocation()
         local deltaX = screenPoint.X - mousePos.X
         local deltaY = screenPoint.Y - mousePos.Y
-        
-        -- Apply smoothing
+
         deltaX = deltaX * AimScript.smoothing
         deltaY = deltaY * AimScript.smoothing
         
@@ -207,13 +182,11 @@ local function MoveMouseToTarget(target)
     end
 end
 
---// Main Aimscript Loop
 Connections.AimLoop = RunService.RenderStepped:Connect(function()
     local mousePos = UserInputService:GetMouseLocation()
     FOVCircle.Position = mousePos
     
     if AimScript.isLocked and AimScript.lockedTarget then
-        -- Check if target is still valid
         if not AimScript.lockedTarget.Character or 
            not AimScript.lockedTarget.Character:FindFirstChild(AimScript.aimPart) or
            AimScript.lockedTarget.Character.Humanoid.Health <= 0 then
@@ -227,7 +200,6 @@ Connections.AimLoop = RunService.RenderStepped:Connect(function()
     end
 end)
 
---// AIMSCRIPT UI SECTION
 local AimScriptSection = MainTab:AddSection("🎯 Enhanced AimScript")
 
 AimScriptSection:AddToggle("AimScriptToggle", {
@@ -364,7 +336,6 @@ AimScriptSection:AddKeybind("AimScriptKeybind", {
     end
 })
 
---// ENHANCED ESP SYSTEM
 local ESP = {
     enabled = false,
     fillColor = Color3.fromRGB(255, 0, 0),
@@ -459,8 +430,6 @@ end
 
 local function CreateESP(player)
     if not player or player == LocalPlayer or ESP.objects[player] then return end
-    
-    -- Team check
     if ESP.teamCheck and player.Team == LocalPlayer.Team then return end
 
     local success, highlight = pcall(function()
@@ -520,12 +489,10 @@ local function RemoveESP(player)
     DebugLog("ESP removed for: " .. player.Name)
 end
 
--- Initialize ESP for existing players
 for _, p in ipairs(Players:GetPlayers()) do
     CreateESP(p)
 end
 
--- Connect player events
 Connections.PlayerAdded = Players.PlayerAdded:Connect(function(p)
     CreateESP(p)
 end)
@@ -534,7 +501,6 @@ Connections.PlayerRemoving = Players.PlayerRemoving:Connect(function(p)
     RemoveESP(p)
 end)
 
--- ESP Update Loop
 Connections.ESPLoop = RunService.RenderStepped:Connect(function()
     if not ESP.enabled then
         for _, highlight in pairs(ESP.objects) do
@@ -576,7 +542,6 @@ Connections.ESPLoop = RunService.RenderStepped:Connect(function()
     end
 end)
 
---// ESP UI SECTION
 local ESPSection = MainTab:AddSection("👀 Enhanced ESP")
 
 ESPSection:AddToggle("ESPEnabled", {
@@ -703,7 +668,7 @@ ESPSection:AddToggle("ESPTeamCheck", {
     Default = false
 }):OnChanged(function(Value)
     ESP.teamCheck = Value
-    -- Refresh ESP
+
     for _, player in ipairs(Players:GetPlayers()) do
         RemoveESP(player)
         CreateESP(player)
@@ -711,7 +676,6 @@ ESPSection:AddToggle("ESPTeamCheck", {
     DebugLog("ESP team check: " .. tostring(Value))
 end)
 
---// ENHANCED LOCALPLAYER FEATURES
 local LocalPlayerFeatures = {
     noclip = false,
     infJump = false,
@@ -724,7 +688,6 @@ local LocalPlayerFeatures = {
     connections = {}
 }
 
--- Noclip function
 local function ToggleNoclip(enabled)
     if LocalPlayerFeatures.connections.noclip then
         LocalPlayerFeatures.connections.noclip:Disconnect()
@@ -743,7 +706,6 @@ local function ToggleNoclip(enabled)
     end
 end
 
--- Infinite Jump
 local function ToggleInfJump(enabled)
     if LocalPlayerFeatures.connections.infJump then
         LocalPlayerFeatures.connections.infJump:Disconnect()
@@ -758,7 +720,6 @@ local function ToggleInfJump(enabled)
     end
 end
 
--- Enhanced Fly System
 local function ToggleFly(enabled)
     if LocalPlayerFeatures.connections.fly then
         LocalPlayerFeatures.connections.fly:Disconnect()
@@ -798,7 +759,6 @@ local function ToggleFly(enabled)
     end
 end
 
--- Speed modification
 local function UpdateWalkSpeed(speed)
     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
         LocalPlayer.Character.Humanoid.WalkSpeed = speed
@@ -811,7 +771,6 @@ local function UpdateJumpPower(power)
     end
 end
 
--- God Mode
 local function ToggleGodMode(enabled)
     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
         if enabled then
@@ -824,7 +783,6 @@ local function ToggleGodMode(enabled)
     end
 end
 
--- Invisibility
 local function ToggleInvisibility(enabled)
     if LocalPlayer.Character then
         for _, part in pairs(LocalPlayer.Character:GetChildren()) do
@@ -845,7 +803,6 @@ local function ToggleInvisibility(enabled)
     end
 end
 
---// LOCALPLAYER UI SECTION
 local LocalPlayerSection = MainTab:AddSection("🧍 Enhanced LocalPlayer Features")
 
 LocalPlayerSection:AddToggle("Noclip", {
@@ -936,7 +893,6 @@ LocalPlayerSection:AddToggle("Invisible", {
     DebugLog("Invisibility toggled: " .. tostring(Value))
 end)
 
---// ENHANCED EXTRA FEATURES
 local ExtraFeatures = {
     thirdPerson = false,
     spin = false,
@@ -948,7 +904,6 @@ local ExtraFeatures = {
     connections = {}
 }
 
--- Third Person Toggle
 local function ToggleThirdPerson(enabled)
     local success, cameraController = pcall(function()
         return require(LocalPlayer.PlayerScripts.Controllers.CameraController)
@@ -962,7 +917,6 @@ local function ToggleThirdPerson(enabled)
     end
 end
 
--- Spin Character
 local function ToggleSpin(enabled)
     if ExtraFeatures.connections.spin then
         ExtraFeatures.connections.spin:Disconnect()
@@ -978,14 +932,12 @@ local function ToggleSpin(enabled)
     end
 end
 
--- FOV Changer
 local function UpdateFOV(fov)
     if workspace.CurrentCamera then
         workspace.CurrentCamera.FieldOfView = fov
     end
 end
 
--- Fullbright
 local function ToggleFullbright(enabled)
     if enabled then
         Lighting.Brightness = 2
@@ -1002,7 +954,6 @@ local function ToggleFullbright(enabled)
     end
 end
 
---// EXTRA FEATURES UI SECTION
 local ExtraSection = MiscTab:AddSection("✨ Enhanced Extra Features")
 
 ExtraSection:AddToggle("ThirdPersonToggle", {
@@ -1043,7 +994,7 @@ ExtraSection:AddToggle("FOVChanger", {
     if Value then
         UpdateFOV(ExtraFeatures.customFov)
     else
-        UpdateFOV(70) -- Default FOV
+        UpdateFOV(70)
     end
     DebugLog("FOV changer toggled: " .. tostring(Value))
 end)
@@ -1073,7 +1024,6 @@ ExtraSection:AddToggle("Fullbright", {
     DebugLog("Fullbright toggled: " .. tostring(Value))
 end)
 
---// ENHANCED CLIENT FEATURES
 local ClientFeatures = {
     darkMode = false,
     customAmbient = false,
@@ -1120,7 +1070,6 @@ local function ToggleRainbowMode(enabled)
     end
 end
 
---// CLIENT UI SECTION
 local ClientSection = MiscTab:AddSection("💻 Enhanced Client Features")
 
 ClientSection:AddButton({
@@ -1169,7 +1118,6 @@ ClientSection:AddButton({
     end
 })
 
---// PERFORMANCE MONITORING
 local PerformanceMonitor = {
     enabled = false,
     fps = 0,
@@ -1180,23 +1128,18 @@ local PerformanceMonitor = {
 
 local function UpdatePerformanceStats()
     if not PerformanceMonitor.enabled then return end
-    
-    -- FPS Calculation
+
     local lastTime = tick()
     PerformanceMonitor.connections.fps = RunService.RenderStepped:Connect(function()
         local currentTime = tick()
         PerformanceMonitor.fps = math.floor(1 / (currentTime - lastTime))
         lastTime = currentTime
     end)
-    
-    -- Memory usage (approximation)
     PerformanceMonitor.memory = collectgarbage("count")
     
-    -- Basic ping estimation
     PerformanceMonitor.ping = LocalPlayer:GetNetworkPing() * 1000
 end
 
---// SETTINGS TAB
 local SettingsSection = SettingsTab:AddSection("⚙️ Script Settings")
 
 SettingsSection:AddToggle("DebugMode", {
@@ -1242,14 +1185,12 @@ SettingsSection:AddButton({
         ShowNotification("🔄 Reloading", "Script will reload in 2 seconds...", 2, "warn")
         wait(2)
         
-        -- Disconnect all connections
         for name, connection in pairs(Connections) do
             if connection then
                 connection:Disconnect()
             end
         end
-        
-        -- Clear all objects
+ 
         for player, _ in pairs(ESP.objects) do
             RemoveESP(player)
         end
@@ -1257,13 +1198,11 @@ SettingsSection:AddButton({
         if FOVCircle then
             FOVCircle:Remove()
         end
-        
-        -- Reload script
-        loadstring(game:HttpGet("YOUR_SCRIPT_URL_HERE"))()
+
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/KloBraticc/RVCheat/main/rivals.lua"))()
     end
 })
 
---// KEYBIND MANAGER
 local KeybindManager = {
     keybinds = {
         toggleUI = Enum.KeyCode.RightShift,
@@ -1273,7 +1212,6 @@ local KeybindManager = {
     }
 }
 
--- UI Toggle
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
     
@@ -1289,7 +1227,6 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
---// ANTI-DETECTION MEASURES
 local AntiDetection = {
     enabled = true,
     methods = {
@@ -1304,17 +1241,15 @@ local function RandomizeTimings()
     wait(randomDelay)
 end
 
--- Apply anti-detection measures
 if AntiDetection.enabled then
     spawn(function()
         while true do
             RandomizeTimings()
-            wait(math.random(30, 120)) -- Random interval between 30-120 seconds
+            wait(math.random(30, 120))
         end
     end)
 end
 
---// SAVE/LOAD SYSTEM ENHANCED
 if SaveManager and InterfaceManager then
     SaveManager:SetLibrary(Fluent)
     InterfaceManager:SetLibrary(Fluent)
@@ -1323,10 +1258,9 @@ if SaveManager and InterfaceManager then
     InterfaceManager:SetFolder("SwirlHub_Enhanced")
     SaveManager:SetFolder("SwirlHub_Enhanced/rivals")
     
-    -- Auto-save settings every 5 minutes
     spawn(function()
         while true do
-            wait(300) -- 5 minutes
+            wait(300)
             if SaveManager then
                 SaveManager:Save()
                 DebugLog("Auto-saved settings")
@@ -1334,15 +1268,11 @@ if SaveManager and InterfaceManager then
         end
     end)
     
-    -- Load settings
     SaveManager:LoadAutoloadConfig()
     DebugLog("Settings loaded from auto-save")
 end
 
---// FINAL SETUP
 Window:SelectTab(1)
-
--- Final success notification
 ShowNotification("🎉 SwirlHub Enhanced", "All systems loaded successfully!", 5, "success")
 ShowNotification("ℹ️ Keybinds", "Right Shift: Toggle UI | T: Toggle ESP | F: Toggle Fly", 8, "info")
 
@@ -1351,22 +1281,18 @@ DebugLog("Total features loaded: AimScript, ESP, LocalPlayer, Extras, Client, Pe
 DebugLog("Script version: Enhanced v2.0", "SUCCESS")
 DebugLog("Enjoy the enhanced experience! 🚀", "SUCCESS")
 
---// CLEANUP ON SCRIPT END
 game.Players.PlayerRemoving:Connect(function(player)
     if player == LocalPlayer then
-        -- Cleanup all connections
         for name, connection in pairs(Connections) do
             if connection then
                 connection:Disconnect()
             end
         end
         
-        -- Clean up ESP
         for p, _ in pairs(ESP.objects) do
             RemoveESP(p)
         end
         
-        -- Clean up FOV circle
         if FOVCircle then
             FOVCircle:Remove()
         end
