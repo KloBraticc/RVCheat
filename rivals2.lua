@@ -1199,7 +1199,7 @@ SettingsSection:AddButton({
             FOVCircle:Remove()
         end
 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/KloBraticc/RVCheat/main/rivals.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/KloBraticc/RVCheat/main/rivals2.lua"))()
     end
 })
 
